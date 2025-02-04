@@ -27,14 +27,18 @@ pub fn main() anyerror!void {
     const move_speed: f32 = 5;
 
     var player = Player{
+        .height = 2,
+        .width = 1,
         .speed = move_speed,
         .mouse_sensitivity = 0.005,
         .yaw = 0,
         .pitch = 0,
         .velocity_y = 0,
+        .is_jumping = true,
+        .jump_time = 0,
         .position = .{
             .x = 8,
-            .y = 100,
+            .y = 18,
             .z = 8,
         },
         .direction = .{
@@ -45,7 +49,7 @@ pub fn main() anyerror!void {
     };
 
     var camera = rl.Camera3D{
-        .position = player.position,
+        .position = player.position.add(rl.Vector3{ .x = 0, .y = player.height, .z = 0 }),
         .target = player.position.add(player.direction),
         .up = .{ .x = 0.0, .y = 1.0, .z = 0.0 },
         .fovy = 45.0,
@@ -89,7 +93,7 @@ pub fn main() anyerror!void {
         // Update
         //---------
         mouse_delta = rl.getMouseDelta();
-        rl.traceLog(.info, "Mouse Delta: x=%f y=%f", .{ mouse_delta.x, mouse_delta.y });
+        // rl.traceLog(.info, "Mouse Delta: x=%f y=%f", .{ mouse_delta.x, mouse_delta.y });
 
         if (rl.isCursorHidden()) {
             camera.update(.custom);
@@ -102,38 +106,38 @@ pub fn main() anyerror!void {
 
         if (rl.isMouseButtonPressed(.left)) {}
 
-        try player.update(mouse_delta);
+        try player.update(&world, mouse_delta);
         camera.position = player.position;
         camera.target = player.position.add(player.direction);
 
-        rl.traceLog(.info, "Player pitch=%f yaw=%f", .{
-            player.pitch,
-            player.yaw,
-        });
+        // rl.traceLog(.info, "Player pitch=%f yaw=%f", .{
+        //     player.pitch,
+        //     player.yaw,
+        // });
 
-        rl.traceLog(.info, "Player direction x=%f y=%f z=%f", .{
-            player.direction.x,
-            player.direction.y,
-            player.direction.z,
-        });
+        // rl.traceLog(.info, "Player direction x=%f y=%f z=%f", .{
+        //     player.direction.x,
+        //     player.direction.y,
+        //     player.direction.z,
+        // });
 
-        rl.traceLog(.info, "Player position x=%f y=%f z=%f", .{
-            player.position.x,
-            player.position.y,
-            player.position.z,
-        });
+        // rl.traceLog(.info, "Player position x=%f y=%f z=%f", .{
+        //     player.position.x,
+        //     player.position.y,
+        //     player.position.z,
+        // });
 
-        rl.traceLog(.info, "Camera target: x=%f y=%f z=%f", .{
-            camera.target.x,
-            camera.target.y,
-            camera.target.z,
-        });
+        // rl.traceLog(.info, "Camera target: x=%f y=%f z=%f", .{
+        //     camera.target.x,
+        //     camera.target.y,
+        //     camera.target.z,
+        // });
 
-        rl.traceLog(.info, "Camera position: x=%f y=%f z=%f", .{
-            camera.position.x,
-            camera.position.y,
-            camera.position.z,
-        });
+        // rl.traceLog(.info, "Camera position: x=%f y=%f z=%f", .{
+        //     camera.position.x,
+        //     camera.position.y,
+        //     camera.position.z,
+        // });
         // try world.update(player.position);
 
         // Draw

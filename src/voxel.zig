@@ -91,13 +91,20 @@ pub const Chunk = struct {
         c.divided_voxels.deinit();
     }
 
-    pub fn generateChunk(allocator: Allocator, chunk_size: Size, position: Chunk.Position) !Chunk {
+    pub fn generateChunk(
+        allocator: Allocator,
+        chunk_size: Size,
+        position: Chunk.Position,
+        world_seed: u64,
+    ) !Chunk {
         const voxels = try allocator.alloc(
             Voxel.Id,
             chunk_size * chunk_size * chunk_size,
         );
 
         @memset(voxels, 0);
+
+        var prng = std.rand.DefaultPrng.init(position.hash(world_seed));
 
         var iterate = iteratePositions(chunk_size);
         while (iterate.next()) |voxel_position| {
